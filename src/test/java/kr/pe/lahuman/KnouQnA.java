@@ -13,6 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,24 +29,32 @@ import static com.codeborne.selenide.Selenide.open;
  * Created by lahuman on 2016. 2. 4..
  */
 public class KnouQnA {
+    public static String CNSL_DC = "604" ;
+    public static String QUES_NO = "903524";
+    private int MAX_PAGE_NO =4;
+    public static final String baseUrl = "http://portal.knou.ac.kr/portal/eco/cnslusr/retrieveCnslDetailContentScreen.do?cnsl_dc="+ CNSL_DC;
 
-    public static final String baseUrl = "http://portal.knou.ac.kr/portal/eco/cnslusr/retrieveCnslDetailContentScreen.do?dpgubun=&dpcnslTit=%EC%9E%85%ED%95%99%EC%83%81%EB%8B%B4&cnsl_dc=593&userid=&category=&chk=N&findText=&cnslTit=%EC%9E%85%ED%95%99%EC%9D%BC%EB%B0%98&useridgb=&dp=&find=A&_enpass_self_redirect_=YES";
+//    http://portal.knou.ac.kr/portal/eco/cnslusr/retrieveCnslDetailContentScreen.do?cnsl_dc=604&ques_no=903524&dpgubun=&dp=&category=&epTicket=LOG
 
 
     private static WebDriver driver = null;
     private static JavascriptExecutor js = null;
 
-    private int MAX_PAGE_NO = 250;
+
 
     private WritableWorkbook workbook = null;
     private WritableSheet sheet = null;
     private int rowCount = 0;
 
     @BeforeClass
-    public static void 로그인(){
-
-        open(baseUrl+ "&ques_no=908734&pageNo=1");
+    public static void login(){
+//        System.setProperty("webdriver.ie.driver", "d:\\IEDriverServer.exe");
+        System.setProperty("webdriver.firefox.bin","D:\\Program Files (x86)\\Mozilla Firefox\\Firefox.exe");
+//        driver = new InternetExplorerDriver();
+//        driver.manage().window().maximize();
+        open(baseUrl+ "&ques_no="+QUES_NO+"&pageNo=1");
         driver = WebDriverRunner.getWebDriver();
+//        driver.navigate().to(baseUrl+ "&ques_no=908734&pageNo=1");
         js = (JavascriptExecutor)driver;
 
     }
@@ -58,15 +67,17 @@ public class KnouQnA {
         //초기화
         SelenideElement list = $("div.boardleftbox", 2);
         int listCount = list.$$("table > tbody > tr").size();
-        workbook = Workbook.createWorkbook(new File("/Users/lahuman/rnouQnA.xls"));
+        workbook = Workbook.createWorkbook(new File("d:\\rnouQnA.xls"));
         sheet = workbook.createSheet("입학관련", 1);
         makeExcelRow("분류", "신청인", "신청일", "제목", "조회수", "내용", "답변자/소속","답변일", "제목", "내용");
 
-        for(int f=1; f<MAX_PAGE_NO; f++) {//페이지 로테이션
-            driver.get(baseUrl+"&ques_no=908734&pageNo="+f);
+        for(int f=1; f<=MAX_PAGE_NO; f++) {//페이지 로테이션
+            driver.get(baseUrl+"&ques_no="+QUES_NO+"&pageNo="+f);
             for (int i = 0; i < listCount; i++) {
-                array.add(list.$("table > tbody > tr", i).$("td > a").attr("href").replace("javascript:go_fn(593,", "").replace(")", ""));
-                saveContents(f);
+                try {
+                    array.add(list.$("table > tbody > tr", i).$("td > a").attr("href").replace("javascript:go_fn(" + CNSL_DC + ",", "").replace(")", ""));
+                    saveContents(f);
+                }catch (Exception e){}
             }
         }
 
