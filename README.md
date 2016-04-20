@@ -1,4 +1,6 @@
-# ##Selenide (UI 자동 테스트 툴)
+# Selenide (UI 자동 테스트 툴)
+
+### firefox 는 현재(2016.04.20) 최신버젼인 45.x.x 에서는 동작 하지 않습니다. [44.0.2 버젼](https://support.mozilla.org/ko/kb/install-older-version-of-firefox)을 다운로드 받아서 사용 하셔야 합니다.
 
 >firefox 제외 하면 수동으로 해당 브라우저에 대한 추가 파일 설치 필요
 >[다운로드](http://selenium-release.storage.googleapis.com/index.html)
